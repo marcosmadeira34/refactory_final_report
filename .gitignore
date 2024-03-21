@@ -1,0 +1,96 @@
+# Arquivos de byte compilados
+__pycache__/
+*.pyc
+
+#
+*.xlsx
+*.xls
+*.csv
+
+# Arquivos gerados pelo ambiente virtual
+venv/
+env/
+
+# Arquivos de log
+*.log
+
+# Arquivos de configuração
+*.ini
+*.cfg
+
+# Arquivos gerados pelo IDE
+.idea/
+.vscode/
+
+# Arquivos de saída
+*.pyo
+*.pyd
+*.pyz
+*.pyw
+
+# Arquivos de cache
+*.cache/
+
+# Arquivos de dados
+*.db
+*.sqlite3
+
+# Arquivos de documentação
+docs/_build/
+
+# Arquivos de dependências
+pip-log.txt
+
+
+# Outros arquivos gerados
+*.bak
+*.swp
+*.tmp
+*.temp
+*.~*
+
+
+# Arquivos/diretórios ignorados
+Ambiente de Impressão/
+Ambiente de Rede/
+Configurações Locais/
+Cookies/
+Dados de Aplicativos/
+Documents/Meus Vídeos/
+Documents/Minhas Imagens/
+Documents/Minhas Músicas/
+Menu Iniciar/
+Meus Documentos/
+Modelos/
+Recent/
+SendTo/
+
+# Arquivos específicos a serem ignorados
+/.anaconda/
+/.bash_history
+/.conda/
+/.condarc
+/.continuum/
+/.gitconfig
+/.ipython/
+/.jupyter/
+/.vscode/
+/AppData/
+/Contacts/
+/Desktop/
+/Downloads/
+/Favorites/
+/Links/
+/Music/
+/NTUSER.DAT
+/NTUSER.DAT{f2ad031e-1cd2-11ee-8f7a-b060886116fa}.TM.blf
+/NTUSER.DAT{f2ad031e-1cd2-11ee-8f7a-b060886116fa}.TMContainer00000000000000000001.regtrans-ms
+/NTUSER.DAT{f2ad031e-1cd2-11ee-8f7a-b060886116fa}.TMContainer00000000000000000002.regtrans-ms
+/OneDrive - Arklok Equipamentos de Informatica/
+/Saved Games/
+/Searches/
+/Videos/
+/ntuser.dat.LOG1
+/ntuser.dat.LOG2
+/ntuser.ini
+/venv/
