@@ -598,7 +598,12 @@ class ConsolidatePipeline:
                     month_folder_path = os.path.join(subfolder_path, month_year)
                     if os.path.exists(month_folder_path):
                         excel_files = [files for files in os.listdir(month_folder_path) if files.endswith('.xlsx') and not files.startswith('~$')]
-                        if len(excel_files) == 1:
+                        
+                        if len(excel_files) == 0:
+                            print(f'Nenhum arquivo encontrado no diretório {month_folder_path}')
+                            continue
+                        
+                        elif len(excel_files) == 1:
                             print(f'Apenas 1 arquivo encontrado no diretório {month_folder_path}')
                             continue
                         # DataFrame vazio para consolidar os dados
