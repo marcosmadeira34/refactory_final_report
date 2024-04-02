@@ -42,10 +42,7 @@ while True:
         if raw_files:
                 
                 transform_pipeline.format_columns_values(raw_files)
-                transform_pipeline.format_columns_cnpj(raw_files)
-                # transform_pipeline.format_columns_date(raw_files)
                 transform_pipeline.generate_synthesis_sheet(raw_files, data_raw_path)
-                # transform_pipeline.format_billing_values(raw_files)
                 transform_pipeline.format_styles_report_sheet(raw_files, data_raw_path)
                 transform_pipeline.format_styles_synthesis_sheet(raw_files, data_raw_path)
 

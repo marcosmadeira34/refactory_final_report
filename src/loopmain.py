@@ -25,6 +25,8 @@ target_directory = r'/home/administrator/WindowsShare/01 - FATURAMENTO/01 - CLIE
 # DIRETÓRIO DE ARQUIVOS PROCESSADOS (DRAFT)
 process_files = r'/home/administrator/WindowsShare/01 - FATURAMENTO/04 - EXTRATORES PROCESSADOS'
 
+file_path_error = r'/home/administrator/WindowsShare/01 - FATURAMENTO/05 - EXTRATORES COM ERROS' # ARQUIVOS COM ERROS NO EXTRATOR
+
 # DIRETÓRIOS AUXILIARES (SANDBOX)
 output_merge_path = r'C:/DataWare/data/consolidated_files/consolidated_validated/MERGE_RELATÓRIO_FINAL' # RELATÓRIO FINAL 
 invoiced_orders = r'C:/DataWare/data/consolidated_files/consolidated_validated/PEDIDOS_FATURADOS' # PEDIDOS FATURADOS NO BANCO DE DADOS

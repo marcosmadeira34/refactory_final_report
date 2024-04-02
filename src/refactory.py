@@ -157,6 +157,7 @@ class ExtractPipeline:
     
     def create_files_with_new_orders(self, df_list, data_raw_path, column_name):
         try:
+            
             if df_list:
                 for df in df_list:
                     if not df.empty:  # Verifica se o DataFrame não está vazio
@@ -173,10 +174,16 @@ class ExtractPipeline:
                                 # seleciona apenas as colunas necessárias
                                 order_group = order_group[self.columns_keeper()]
                                 # renomeia as colunas
-                                order_group.rename(columns=self.rename_columns(), inplace=True)
+                                order_group.rename(columns=self.rename_columns(), inplace=True)                                
+                                
+                                # formatação das colunas
+                                TransformPipeline().format_columns_date([(filename, order_group)])
+                                TransformPipeline().format_columns_cnpj([(filename, order_group)])
 
                                 # salva o arquivo
                                 order_group.to_excel(file_path, sheet_name='RELATÓRIO', index=False)
+                                
+
                                                             
                         else:
                             print('Coluna Nome do Cliente não encontrada...')
@@ -290,28 +297,26 @@ class TransformPipeline:
             print(f'Erro ao formatar CNPJ: {e}')
 
 
-    def format_columns_date(self, df_list, columns_to_format=['DATA DE ATIVACAO', 'DATA DE FATURAMENTO', 'DATA BASE REAJUSTE']):
+    def format_columns_date(self, df_list, columns_to_format=['DATA DE ATIVACAO', 'DATA DE FATURAMENTO', 
+                                                              'DATA BASE REAJUSTE', 'DATA DE ATIVACAO LEGADO']):
         try:
             for filename, df in df_list:
                 if isinstance(df, pd.DataFrame):
                     for col in columns_to_format:
                         if col in df.columns:
-                            pd.api.types.is_datetime64_any_dtype(df[col])
-                            df[col] = df[col].dt.strftime('%d/%m/%Y')  
+                            # Verifica se a coluna já é do tipo datetime64, se não, converte
+                            if not pd.api.types.is_datetime64_any_dtype(df[col]):
+                                df[col] = pd.to_datetime(df[col], errors='coerce')
+                            df[col] = df[col].dt.strftime('%d/%m/%Y')
                             print(f'Coluna de data {col} formatada com sucesso no arquivo {filename}...')
                         else:
-                            df[col] = pd.to_datetime(df[col].loc[df[col].notna()], format='%d/%m/%Y', errors='coerce')
                             print(f'Coluna {col} não encontrada no arquivo {filename}.')
                 else:
                     print(f"Erro: O objeto associado ao arquivo {filename} não é um DataFrame.")
         except Exception as e:
-            print(f'Erro ao formatar data: {e}')
-            
+            print(f'Erro ao formatar data: {e}')           
        
-    
-            print(f'Erro ao salvar arquivo: {e}')
-    
-    
+        
     def format_styles_report_sheet(self, df_list, directory):
         try:
             for filename, df in df_list:
