@@ -192,9 +192,9 @@ class FinalReport:
                             # verifica se o arquivo contém colunas que não existem no banco de dados
                             new_columns = set(new_orders_df.columns) - set(OrdersTable.__table__.columns.keys())
                             if new_columns:
-                                print(f'Colunas novas encontradas: {new_columns}')
                                 print('Adicionando colunas ao banco de dados....')
 
+                                print(f'Colunas novas encontradas: {new_columns}')
                                 # Verifica se as colunas novas já existem no banco de dados
                                 existing_columns = set(OrdersTable.__table__.columns.keys())
                                 # adiciona as colunas novas ao banco de dados

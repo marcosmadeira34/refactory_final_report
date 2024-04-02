@@ -1,5 +1,5 @@
 from controllers import *
-from consolidador import MergeExcelReports
+from consolidator import MergeExcelReports
 from database import *
 from colorama import Fore
 from termcolor import cprint
