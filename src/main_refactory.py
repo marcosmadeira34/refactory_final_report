@@ -24,22 +24,19 @@ new_orders = None
 while True:
         print('Iniciando extração de novos pedidos...')
         files_data = extract_pipeline.list_files_in_directory(extractor_file_path, file_path_error)
-        print(f'Arquivos encontrados: {files_data}')
-
+        
         if files_data:
                 extract_pipeline.verify_column(extractor_file_path, files_data, column_name, file_path_error)
                 new_orders = extract_pipeline.identify_new_orders(files_data, column_name)
-                print(f'Novos pedidos identificados: {new_orders}')
+                
 
         if new_orders:
                 extract_pipeline.create_files_with_new_orders(new_orders, data_raw_path, column_name)
                 extract_pipeline.standard_columns_name(new_orders)
                 extract_pipeline.add_new_columns_to_database(new_orders)    
                 extract_pipeline.update_database(new_orders)
-                
-        print('Etapa de extração finalizada com sucesso!')   
-
-
+             
+        
         raw_files = extract_pipeline.list_files_in_raw_directory(data_raw_path)
 
         if raw_files:
@@ -56,10 +53,8 @@ while True:
         # print('Etapa de formatação finalizada com sucesso!')
 
         transformated_files = load_pipeline.move_files_to_month_subfolder(data_raw_path, report_path)
-        
-        """ files_consolidated = consolidator.list_files_to_consolidate(report_path)
-        
-        if files_consolidated: """
+       
+       
         consolidator.merge_excel_reports(report_path)
         # transform_pipeline.format_styles_report_sheet(files_consolidated, report_path)
         print('Etapa de consolidação finalizada com sucesso!')

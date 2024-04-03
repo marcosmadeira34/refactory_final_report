@@ -143,8 +143,8 @@ class ExtractPipeline:
                     'PERIODO DE FATURAMENTO', 'DIAS DE LOCACAO', 'VALOR UNITARIO', 'VALOR BRUTO', 'DATA DE ATIVACAO', 'QUANTIDADE', 
                     'VLR. TOTAL PEDIDO', 'VLR. TOTAL FATURAMENTO',
                     'NF DE FATURAMENTO',  'DATA DE FATURAMENTO', 'DATA BASE REAJUSTE', 'VALOR DE ORIGEM', 
-                    'INDEXADOR', 'CALCULO REAJUSTE', 'INDICE APLICADO', 'ACRESCIMO', 'CONTRATO LEGADO', 'PEDIDO FATURAMENTO'
-                    ]
+                    'INDEXADOR', 'CALCULO REAJUSTE', 'INDICE APLICADO', 'ACRESCIMO', 'CONTRATO LEGADO', 'PEDIDO FATURAMENTO', 
+                    'SERIE DO EQUIPAMENTO']
         
         
         return columns
@@ -182,9 +182,7 @@ class ExtractPipeline:
 
                                 # salva o arquivo
                                 order_group.to_excel(file_path, sheet_name='RELATÓRIO', index=False)
-                                
-
-                                                            
+                                                                                           
                         else:
                             print('Coluna Nome do Cliente não encontrada...')
             else:
@@ -611,9 +609,19 @@ class ConsolidatePipeline:
                         # Iterar sobre os arquivos .xlsx dentro do diretório do mês
                         for file_name in excel_files:                        
                             file_path = os.path.join(month_folder_path, file_name)
-                            # Ler o arquivo Excel e concatenar no DataFrame consolidado
-                            df = pd.read_excel(file_path, sheet_name='RELATÓRIO', engine='openpyxl')
-                            consolidated_df = pd.concat([consolidated_df, df], ignore_index=True)
+                                                       
+                            # verificar se a planilha 'RELATÓRIO' ou CONSOLIDADO' existe no arquivo
+                            if 'RELATÓRIO' in pd.ExcelFile(file_path).sheet_names:
+                                # Ler o arquivo Excel
+                                df = pd.read_excel(file_path, sheet_name='RELATÓRIO', engine='openpyxl')
+                                # Concatenar o DataFrame
+                                consolidated_df = pd.concat([consolidated_df, df], ignore_index=True)
+                                             
+                            if 'CONSOLIDADO' in pd.ExcelFile(file_path).sheet_names:
+                                # Ler o arquivo Excel
+                                df = pd.read_excel(file_path, sheet_name='CONSOLIDADO', engine='openpyxl')
+                                # Concatenar o DataFrame
+                                consolidated_df = pd.concat([consolidated_df, df], ignore_index=True)                                
                         
                         # Salvar o DataFrame consolidado em um novo arquivo na mesma pasta
                         consolidated_file_path = os.path.join(month_folder_path, f'CONSOLIDADO_{month_year}_{subfolder}.xlsx')

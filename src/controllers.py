@@ -408,9 +408,7 @@ class FinalReport:
                                        'EMISSÃO PEDIDO', 'QTDE PEDIDO', 'VLR UNITÁRIO PEDIDO', 'PERCENT DESCONTO', 
                                        'VLR DESCONTO', 'TES', 'NATUREZA', 'SERIE DE FATURAMENTO', 'VLR UNITÁRIO FATURAMENTO', 
                                        'CLIENTE FATURAMENTO', 'LOJA FATURAMENTO', 'NOME CLI FATURAMENTO', 'QTDE FATURAMENTO', 
-                                       'ORIGEM DO DADO', 'SERIE DO EQUIPAMENTO', 
-                                    
-                                       ]
+                                       'ORIGEM DO DADO', 'SERIE DO EQUIPAMENTO']
                     
 
                     df = df.drop(columns_to_drop, axis=1, errors='ignore')
