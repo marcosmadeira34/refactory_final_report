@@ -5,24 +5,24 @@ import os
 # DIRETÓRIOS PARA SERVIDOR LINUX
 
 # # DIRETÓRIO DE ENTRADA DOS ARQUIVOS EXTRATORES (EXTRACTION)
-# extractor_file_path = r"/home/administrator/WindowsShare/01 - FATURAMENTO/00-EXTRATOR_PEDIDOS_DE_CLIENTES" # EXTRATOR
+extractor_file_path = r"/home/administrator/WindowsShare/01 - FATURAMENTO/00-EXTRATOR_PEDIDOS_DE_CLIENTES" # EXTRATOR
 
 # # DIRETÓRIOS DE SAÍDA DOS ARQUIVOS CRIADOS (LOADING)
-# batch_totvs_path = r'/home/administrator/WindowsShare/01 - FATURAMENTO/01 - CLIENTES - CONTROLE - 2024 TOTVS' # CRIARÁ AS PASTA AQUI
+batch_totvs_path = r'/home/administrator/WindowsShare/01 - FATURAMENTO/01 - CLIENTES - CONTROLE - 2024 TOTVS' # CRIARÁ AS PASTA AQUI
 
-# # DIRETÓRIO DE TRATAMENTO DOS ARQUIVOS (TRANSFORMATION)
-# data_raw_path = r'/home/administrator/WindowsShare/01 - FATURAMENTO/02 - DATA_RAW' # NOVOS PEDIDOS IDENTIFICADOS NO EXTRATOR
-# source_directory = r'/home/administrator/WindowsShare/01 - FATURAMENTO/02 - DATA_RAW' # DIRETÓRIO DE ORIGEM DOS PEDIDOS
-# report_path = r'/home/administrator/WindowsShare/01 - FATURAMENTO/01 - CLIENTES - CONTROLE - 2024 TOTVS' # DIRETÓRIO DE DESTINO DOS PEDIDOS
+# DIRETÓRIO DE TRATAMENTO DOS ARQUIVOS (TRANSFORMATION)
+data_raw_path = r'/home/administrator/WindowsShare/01 - FATURAMENTO/02 - DATA_RAW' # NOVOS PEDIDOS IDENTIFICADOS NO EXTRATOR
+source_directory = r'/home/administrator/WindowsShare/01 - FATURAMENTO/02 - DATA_RAW' # DIRETÓRIO DE ORIGEM DOS PEDIDOS
+report_path = r'/home/administrator/WindowsShare/01 - FATURAMENTO/01 - CLIENTES - CONTROLE - 2024 TOTVS' # DIRETÓRIO DE DESTINO DOS PEDIDOS
 
 # # DIRETÓRIO DE ARQUIVOS PROCESSADOS (DRAFT)
-# process_files = r'/home/administrator/WindowsShare/01 - FATURAMENTO/04 - EXTRATORES PROCESSADOS'
+process_files = r'/home/administrator/WindowsShare/01 - FATURAMENTO/04 - EXTRATORES PROCESSADOS'
 
-# file_path_error = r'/home/administrator/WindowsShare/01 - FATURAMENTO/05 - EXTRATORES COM ERROS' # ARQUIVOS COM ERROS NO EXTRATOR
+file_path_error = r'/home/administrator/WindowsShare/01 - FATURAMENTO/05 - EXTRATORES COM ERROS' # ARQUIVOS COM ERROS NO EXTRATOR
 
-# # DIRETÓRIOS AUXILIARES (SANDBOX)
-# output_merge_path = r'C:/DataWare/data/consolidated_files/consolidated_validated/MERGE_RELATÓRIO_FINAL' # RELATÓRIO FINAL 
-# invoiced_orders = r'C:/DataWare/data/consolidated_files/consolidated_validated/PEDIDOS_FATURADOS' # PEDIDOS FATURADOS NO BANCO DE DADOS
+# DIRETÓRIOS AUXILIARES (SANDBOX)
+output_merge_path = r'C:/DataWare/data/consolidated_files/consolidated_validated/MERGE_RELATÓRIO_FINAL' # RELATÓRIO FINAL 
+invoiced_orders = r'C:/DataWare/data/consolidated_files/consolidated_validated/PEDIDOS_FATURADOS' # PEDIDOS FATURADOS NO BANCO DE DADOS
 
 # INSTÂNCIANDO AS CLASSES
 
@@ -34,11 +34,11 @@ consolidator = ConsolidatePipeline()
 
 # DIRETÓRIOS PARA SERVIDOR WINDOWS
 
-extractor_file_path = r"C:\Users\marcos.silvaext\Documents\01 - INPUT_DATA"
-data_raw_path = r"C:\Users\marcos.silvaext\Documents\02 - DATA_RAW"
-file_path_error = r"C:\Users\marcos.silvaext\Documents\05 - EXTRATORES COM ERROS"
-report_path = r"C:\Users\marcos.silvaext\Documents\04 - REPORTS"
-duplicate_file_path = r"C:\Users\marcos.silvaext\Documents\06 - ARQUIVOS DUPLICADOS"
+# extractor_file_path = r"C:\Users\marcos.silvaext\Documents\01 - INPUT_DATA"
+# data_raw_path = r"C:\Users\marcos.silvaext\Documents\02 - DATA_RAW"
+# file_path_error = r"C:\Users\marcos.silvaext\Documents\05 - EXTRATORES COM ERROS"
+# report_path = r"C:\Users\marcos.silvaext\Documents\04 - REPORTS"
+# duplicate_file_path = r"C:\Users\marcos.silvaext\Documents\06 - ARQUIVOS DUPLICADOS"
 
 column_name = 'Pedido Faturamento'
 
