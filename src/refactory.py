@@ -10,6 +10,7 @@ from database import ConnectPostgresQL, OrdersTable
 from datetime import datetime
 from time import sleep
 import locale
+import glob 
 
 class ExtractPipeline:
     
@@ -29,9 +30,9 @@ class ExtractPipeline:
                                             sheet_name='2-Resultado', engine='openpyxl', header=1)
                         files_data.append((filename, data))
                     else:
-                        print(f"A folha '2-Resultado' não encontrada no arquivo: {filename}")
+                        # print(f"A folha '2-Resultado' não encontrada no arquivo: {filename}")
                         shutil.move(os.path.join(extractor_file_path, filename), os.path.join(file_path_error, filename))
-                        print(f'Arquivo {filename} movido para a pasta de arquivos com erros...')
+                        # print(f'Arquivo {filename} movido para a pasta de arquivos com erros...')
                         
             print(f'Arquivos encontrados: {len(files_data)}')
         except FileNotFoundError:
@@ -182,7 +183,7 @@ class ExtractPipeline:
 
                                 # salva o arquivo
                                 order_group.to_excel(file_path, sheet_name='RELATÓRIO', index=False)
-                                                                                           
+
                         else:
                             print('Coluna Nome do Cliente não encontrada...')
             else:
@@ -598,11 +599,11 @@ class ConsolidatePipeline:
                         excel_files = [files for files in os.listdir(month_folder_path) if files.endswith('.xlsx') and not files.startswith('~$')]
                         
                         if len(excel_files) == 0:
-                            print(f'Nenhum arquivo encontrado no diretório {month_folder_path}')
+                            # print(f'Nenhum arquivo encontrado no diretório {month_folder_path}')
                             continue
                         
                         elif len(excel_files) == 1:
-                            print(f'Apenas 1 arquivo encontrado no diretório {month_folder_path}')
+                            # print(f'Apenas 1 arquivo encontrado no diretório {month_folder_path}')
                             continue
                         # DataFrame vazio para consolidar os dados
                         consolidated_df = pd.DataFrame()
@@ -628,111 +629,105 @@ class ConsolidatePipeline:
 
                         if os.path.exists(consolidated_file_path):
                             print(f'Arquivo {consolidated_file_path} já existe...')
-                            continue                       
+                        
+                        else:
+                            try:
+                                with pd.ExcelWriter(consolidated_file_path, engine='openpyxl') as writer:
+                                    consolidated_df.to_excel(writer, sheet_name="RELATÓRIO", index=False, engine='openpyxl')
+                                    
+                                    consolidated_df['VALOR TOTAL GERADO'] = consolidated_df['VALOR TOTAL GERADO'].str.replace('.', '').str.replace(',', '.').astype(float)
+                                    consolidated_df['VALOR TOTAL FATURAMENTO'] = consolidated_df['VALOR TOTAL FATURAMENTO'].str.replace('.', '').str.replace(',', '.').astype(float)
 
-                        try:
-                            with pd.ExcelWriter(consolidated_file_path, engine='openpyxl') as writer:
-                                consolidated_df.to_excel(writer, sheet_name="RELATÓRIO", index=False, engine='openpyxl')
-                                
-                                consolidated_df['VALOR TOTAL GERADO'] = consolidated_df['VALOR TOTAL GERADO'].str.replace('.', '').str.replace(',', '.').astype(float)
-                                consolidated_df['VALOR TOTAL FATURAMENTO'] = consolidated_df['VALOR TOTAL FATURAMENTO'].str.replace('.', '').str.replace(',', '.').astype(float)
+                                    
+                                    # agrupar os valores das colunas "VALOR TOTAL GERADO" e "VALOR TOTAL FATURADO" por "PROJETO", "OBRA" e "CONTRATO LEGADO"
+                                    sintese_df = consolidated_df.groupby(['PROJETO', 'OBRA', 'CONTRATO LEGADO'], as_index=False).agg(
+                                        {'VALOR TOTAL GERADO': 'sum', 'VALOR TOTAL FATURAMENTO': 'sum'})
+                                    
+                                    # renomear as colunas
+                                    sintese_df = sintese_df.rename(columns={'VALOR TOTAL FATURAMENTO': 'VALOR TOTAL FATURADO'})                    
 
-                                
-                                # agrupar os valores das colunas "VALOR TOTAL GERADO" e "VALOR TOTAL FATURADO" por "PROJETO", "OBRA" e "CONTRATO LEGADO"
-                                sintese_df = consolidated_df.groupby(['PROJETO', 'OBRA', 'CONTRATO LEGADO'], as_index=False).agg(
-                                    {'VALOR TOTAL GERADO': 'sum', 'VALOR TOTAL FATURAMENTO': 'sum'})
-                                
-                                # renomear as colunas
-                                sintese_df = sintese_df.rename(columns={'VALOR TOTAL FATURAMENTO': 'VALOR TOTAL FATURADO'})
-                                
 
-                                # sintese_df['VALOR TOTAL FATURADO'] = pd.to_numeric(sintese_df['VALOR TOTAL FATURADO'], errors='coerce')
-                                # sintese_df['VALOR TOTAL GERADO'] = pd.to_numeric(sintese_df['VALOR TOTAL GERADO'], errors='coerce')
-                                
-                                # sintese_df['VALOR TOTAL FATURADO'] = sintese_df['VALOR TOTAL FATURADO'].str.replace('.', '').str.replace(',', '.')
-                                # sintese_df['VALOR TOTAL GERADO'] = sintese_df['VALOR TOTAL GERADO'].str.replace('.', '').str.replace(',', '.')
+                                    # formatação da planilha "CONSOLIDADO"
+                                    worksheet = writer.sheets['RELATÓRIO']
+                                    for column in range(1, worksheet.max_column + 1):
+                                        worksheet.column_dimensions[worksheet.cell(row=1, column=column).column_letter].width = 20
+                                        worksheet.cell(row=1, column=column).font = Font(color='FFFFFF', bold=True, name='Lato Regular', size=10)
+                                        worksheet.cell(row=1, column=column).fill = PatternFill(start_color="FF0000", end_color="FF0000", fill_type="solid")
+                                        # alinhar o texto no meio
+                                        worksheet.cell(row=1, column=column).alignment = Alignment(horizontal='center', vertical='center', )
+                                        worksheet.row_dimensions[1].height = 24
 
-                                # formatação da planilha "CONSOLIDADO"
-                                worksheet = writer.sheets['RELATÓRIO']
-                                for column in range(1, worksheet.max_column + 1):
-                                    worksheet.column_dimensions[worksheet.cell(row=1, column=column).column_letter].width = 20
-                                    worksheet.cell(row=1, column=column).font = Font(color='FFFFFF', bold=True, name='Lato Regular', size=10)
-                                    worksheet.cell(row=1, column=column).fill = PatternFill(start_color="FF0000", end_color="FF0000", fill_type="solid")
-                                    # alinhar o texto no meio
-                                    worksheet.cell(row=1, column=column).alignment = Alignment(horizontal='center', vertical='center', )
-                                    worksheet.row_dimensions[1].height = 24
+                                    # Configuração para o formato brasileiro
+                                    # locale.setlocale(locale.LC_ALL, 'pt_BR.UTF-8')
 
-                                # Configuração para o formato brasileiro
-                                # locale.setlocale(locale.LC_ALL, 'pt_BR.UTF-8')
+                                    sintese_df.to_excel(writer, sheet_name='SÍNTESE', index=False)
 
-                                sintese_df.to_excel(writer, sheet_name='SÍNTESE', index=False)
+                                    # Adiciona "TOTAL" abaixo da célula "C"
+                                    worksheet = writer.sheets['SÍNTESE']
+                                    # print(f'Sheet sintese criada')
+                                    worksheet.cell(row=worksheet.max_row + 2, column=4, value='TOTAL')
 
-                                # Adiciona "TOTAL" abaixo da célula "C"
-                                worksheet = writer.sheets['SÍNTESE']
-                                # print(f'Sheet sintese criada')
-                                worksheet.cell(row=worksheet.max_row + 2, column=4, value='TOTAL')
+                                    # negrito na célula "TOTAL"
+                                    worksheet.cell(row=worksheet.max_row, column=4).font = Font(bold=True)
+                                    worksheet.cell(row=worksheet.max_row, column=5).font = Font(bold=True)
 
-                                # negrito na célula "TOTAL"
-                                worksheet.cell(row=worksheet.max_row, column=4).font = Font(bold=True)
-                                worksheet.cell(row=worksheet.max_row, column=5).font = Font(bold=True)
+                                                                    
+                                    # Soma os valores da coluna "E" (VALOR TOTAL FATURADO) e "D" (VALOR TOTAL GERADO)
+                                    # sintese_df['VALOR TOTAL FATURADO'] = sintese_df['VALOR TOTAL FATURADO'].str.replace(',', '.')
+                                    # sintese_df['VALOR TOTAL GERADO'] = sintese_df['VALOR TOTAL GERADO'].str.replace(',', '.')
+                                    
 
-                                                                
-                                # Soma os valores da coluna "E" (VALOR TOTAL FATURADO) e "D" (VALOR TOTAL GERADO)
-                                # sintese_df['VALOR TOTAL FATURADO'] = sintese_df['VALOR TOTAL FATURADO'].str.replace(',', '.')
-                                # sintese_df['VALOR TOTAL GERADO'] = sintese_df['VALOR TOTAL GERADO'].str.replace(',', '.')
-                                
+                                    
+                                    total_valor_a_cobrar = sintese_df['VALOR TOTAL GERADO'].sum()
+                                    total_valor_total_previo = sintese_df['VALOR TOTAL FATURADO'].sum()
+                                    
+                                    
+                                    locale.setlocale(locale.LC_ALL, 'pt_BR.UTF-8')
 
-                                
-                                total_valor_a_cobrar = sintese_df['VALOR TOTAL GERADO'].sum()
-                                total_valor_total_previo = sintese_df['VALOR TOTAL FATURADO'].sum()
-                                
-                                
-                                locale.setlocale(locale.LC_ALL, 'pt_BR.UTF-8')
+                                    total_valor_a_cobrar = locale.currency(total_valor_a_cobrar, grouping=True)
+                                    total_valor_total_previo = locale.currency(total_valor_total_previo, grouping=True)
+                                    
+                                    
+                                    # formatação da soma dos valores da coluna "D, E"
+                                    # total_valor_a_cobrar = "${:,.2f}".format(float(re.sub(r'[^\d.]', '', total_valor_a_cobrar)), grouping=True)
+                                    # total_valor_total_previo = "${:,.2f}".format(float(re.sub(r'[^\d.]', '', total_valor_total_previo)), grouping=True)
 
-                                total_valor_a_cobrar = locale.currency(total_valor_a_cobrar, grouping=True)
-                                total_valor_total_previo = locale.currency(total_valor_total_previo, grouping=True)
-                                
-                                
-                                # formatação da soma dos valores da coluna "D, E"
-                                # total_valor_a_cobrar = "${:,.2f}".format(float(re.sub(r'[^\d.]', '', total_valor_a_cobrar)), grouping=True)
-                                # total_valor_total_previo = "${:,.2f}".format(float(re.sub(r'[^\d.]', '', total_valor_total_previo)), grouping=True)
+                                    # negrito na célula "VALOR TOTAL FATURADO"
+                                    worksheet.cell(row=worksheet.max_row, column=4).font = Font(bold=True)
 
-                                # negrito na célula "VALOR TOTAL FATURADO"
-                                worksheet.cell(row=worksheet.max_row, column=4).font = Font(bold=True)
+                                    # formatação da soma dos valores da coluna "D, E"
+                                    # total_valor_a_cobrar = "${:,.2f}".format(float(re.sub(r'[^\d.]', '', total_valor_a_cobrar)), grouping=True)
+                                    # total_valor_total_previo = "${:,.2f}".format(float(re.sub(r'[^\d.]', '', total_valor_total_previo)), grouping=True)
+                                    # total_valor_a_cobrar = "R${:,.2f}".format(float(total_valor_a_cobrar), grouping=True)
+                                    # total_valor_total_previo = "R${:,.2f}".format(float(total_valor_total_previo), grouping=True)
 
-                                # formatação da soma dos valores da coluna "D, E"
-                                # total_valor_a_cobrar = "${:,.2f}".format(float(re.sub(r'[^\d.]', '', total_valor_a_cobrar)), grouping=True)
-                                # total_valor_total_previo = "${:,.2f}".format(float(re.sub(r'[^\d.]', '', total_valor_total_previo)), grouping=True)
-                                # total_valor_a_cobrar = "R${:,.2f}".format(float(total_valor_a_cobrar), grouping=True)
-                                # total_valor_total_previo = "R${:,.2f}".format(float(total_valor_total_previo), grouping=True)
+                                    worksheet.cell(row=worksheet.max_row, column=4, value=total_valor_a_cobrar)
+                                    worksheet.cell(row=worksheet.max_row, column=5, value=total_valor_total_previo)
 
-                                worksheet.cell(row=worksheet.max_row, column=4, value=total_valor_a_cobrar)
-                                worksheet.cell(row=worksheet.max_row, column=5, value=total_valor_total_previo)
+                                    # Aplicar cor vermelha ao cabeçalho das colunas A, B, C e D e negrito e tipografia "Alwyn New Light"
+                                    for column in 'ABCDE':
+                                        header_cell = worksheet[f"{column}1"]
+                                        header_cell.font = Font(color='FFFFFF', bold=True, name='Lato Regular', size=10)
+                                        header_cell.fill = PatternFill(start_color="FF0000", end_color="FF0000", fill_type="solid")
+                                        header_cell.border = Border(left=Side(border_style='thin'), right=Side(border_style='thin'),
+                                                                    top=Side(border_style='thin'), bottom=Side(border_style='thin'))
+                                        # alinhar o texto na esquerda
+                                        header_cell.alignment = Alignment(horizontal='left', vertical='center', )
 
-                                # Aplicar cor vermelha ao cabeçalho das colunas A, B, C e D e negrito e tipografia "Alwyn New Light"
-                                for column in 'ABCDE':
-                                    header_cell = worksheet[f"{column}1"]
-                                    header_cell.font = Font(color='FFFFFF', bold=True, name='Lato Regular', size=10)
-                                    header_cell.fill = PatternFill(start_color="FF0000", end_color="FF0000", fill_type="solid")
-                                    header_cell.border = Border(left=Side(border_style='thin'), right=Side(border_style='thin'),
+                                    # adicona bordas externas à planilha "SÍNTESE"
+                                    for row in worksheet.iter_rows(min_row=1, max_row=worksheet.max_row, min_col=1, max_col=worksheet.max_column):
+                                        for cell in row:
+                                            cell.border = Border(left=Side(border_style='thin'), right=Side(border_style='thin'),
                                                                 top=Side(border_style='thin'), bottom=Side(border_style='thin'))
-                                    # alinhar o texto na esquerda
-                                    header_cell.alignment = Alignment(horizontal='left', vertical='center', )
 
-                                # adicona bordas externas à planilha "SÍNTESE"
-                                for row in worksheet.iter_rows(min_row=1, max_row=worksheet.max_row, min_col=1, max_col=worksheet.max_column):
-                                    for cell in row:
-                                        cell.border = Border(left=Side(border_style='thin'), right=Side(border_style='thin'),
-                                                            top=Side(border_style='thin'), bottom=Side(border_style='thin'))
-
-                                # formatar largura das colunas
-                                writer.sheets['SÍNTESE'].column_dimensions['A'].width = 20
-                                writer.sheets['SÍNTESE'].column_dimensions['B'].width = 15
-                                writer.sheets['SÍNTESE'].column_dimensions['C'].width = 31
-                                writer.sheets['SÍNTESE'].column_dimensions['D'].width = 23
-                                writer.sheets['SÍNTESE'].column_dimensions['E'].width = 23
-                        except Exception as e:
-                            print(f'Erro ao salvar arquivo: {e}')
+                                    # formatar largura das colunas
+                                    writer.sheets['SÍNTESE'].column_dimensions['A'].width = 20
+                                    writer.sheets['SÍNTESE'].column_dimensions['B'].width = 15
+                                    writer.sheets['SÍNTESE'].column_dimensions['C'].width = 31
+                                    writer.sheets['SÍNTESE'].column_dimensions['D'].width = 23
+                                    writer.sheets['SÍNTESE'].column_dimensions['E'].width = 23
+                            except Exception as e:
+                                print(f'Erro ao salvar arquivo: {e}')
 
         except PermissionError as e:
             print(f'Erro de permissão: {e}')
