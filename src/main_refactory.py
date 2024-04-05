@@ -48,29 +48,29 @@ while True:
         print('Iniciando extração de novos pedidos...')
         files_data = extract_pipeline.list_files_in_directory(extractor_file_path, file_path_error)
         
-        if files_data:
-                extract_pipeline.verify_column(extractor_file_path, files_data, column_name, file_path_error)
-                new_orders = extract_pipeline.identify_new_orders(files_data, column_name)
+        
+        extract_pipeline.verify_column(extractor_file_path, files_data, column_name, file_path_error)
+        new_orders = extract_pipeline.identify_new_orders(files_data, column_name)
                 
 
-        if new_orders:
-                extract_pipeline.create_files_with_new_orders(new_orders, data_raw_path, column_name)
-                extract_pipeline.standard_columns_name(new_orders)
-                extract_pipeline.add_new_columns_to_database(new_orders)    
-                extract_pipeline.update_database(new_orders)
+        
+        extract_pipeline.create_files_with_new_orders(new_orders, data_raw_path, column_name)
+        extract_pipeline.standard_columns_name(new_orders)
+        extract_pipeline.add_new_columns_to_database(new_orders)    
+        extract_pipeline.update_database(new_orders)
              
         
         raw_files = extract_pipeline.list_files_in_raw_directory(data_raw_path)
 
-        if raw_files:
+        
                 
-                transform_pipeline.format_columns_values(raw_files)
-                transform_pipeline.format_columns_cnpj(raw_files)
+        transform_pipeline.format_columns_values(raw_files)
+                # transform_pipeline.format_columns_cnpj(raw_files)
                 # transform_pipeline.format_columns_date(raw_files)
-                transform_pipeline.generate_synthesis_sheet(raw_files, data_raw_path)
+        transform_pipeline.generate_synthesis_sheet(raw_files, data_raw_path)
                 # transform_pipeline.format_billing_values(raw_files)
-                transform_pipeline.format_styles_report_sheet(raw_files, data_raw_path)
-                transform_pipeline.format_styles_synthesis_sheet(raw_files, data_raw_path)
+        transform_pipeline.format_styles_report_sheet(raw_files, data_raw_path)
+        transform_pipeline.format_styles_synthesis_sheet(raw_files, data_raw_path)
 
 
         # print('Etapa de formatação finalizada com sucesso!')
@@ -81,3 +81,11 @@ while True:
         consolidator.merge_excel_reports(report_path)
         # transform_pipeline.format_styles_report_sheet(files_consolidated, report_path)
         print('Etapa de consolidação finalizada com sucesso!')
+
+
+
+
+
+
+
+        

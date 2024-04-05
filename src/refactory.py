@@ -467,6 +467,10 @@ class LoadPipeline:
 
     def move_files_to_month_subfolder(self, directory_origin, target_directory):
 
+        if not any(file.endswith('.xlsx') for file in os.listdir(directory_origin)):
+            print('Nenhum arquivo encontrado...')
+            return False    
+        
         # obtém os arquivos xlsx no subdiretório principal
         files_to_move = [file for file in os.listdir(directory_origin) if file.endswith('.xlsx')]
         
@@ -727,7 +731,7 @@ class ConsolidatePipeline:
                                     writer.sheets['SÍNTESE'].column_dimensions['D'].width = 23
                                     writer.sheets['SÍNTESE'].column_dimensions['E'].width = 23
                             except Exception as e:
-                                print(f'Erro ao salvar arquivo: {e}')
+                                print(f'Erro ao salvar arquivo no arquivo {consolidated_file_path}: {e}')
 
         except PermissionError as e:
             print(f'Erro de permissão: {e}')
