@@ -4,7 +4,7 @@ import os
 
 # DIRETÓRIOS PARA SERVIDOR LINUX
 
-# # DIRETÓRIO DE ENTRADA DOS ARQUIVOS EXTRATORES (EXTRACTION)
+# DIRETÓRIO DE ENTRADA DOS ARQUIVOS EXTRATORES (EXTRACTION)
 extractor_file_path = r"/home/administrator/WindowsShare/01 - FATURAMENTO/00-EXTRATOR_PEDIDOS_DE_CLIENTES" # EXTRATOR
 
 # # DIRETÓRIOS DE SAÍDA DOS ARQUIVOS CRIADOS (LOADING)
@@ -33,12 +33,12 @@ load_pipeline = LoadPipeline()
 consolidator = ConsolidatePipeline()
 
 # DIRETÓRIOS PARA SERVIDOR WINDOWS
-
-# extractor_file_path = r"C:\Users\marcos.silvaext\Documents\01 - INPUT_DATA"
-# data_raw_path = r"C:\Users\marcos.silvaext\Documents\02 - DATA_RAW"
-# file_path_error = r"C:\Users\marcos.silvaext\Documents\05 - EXTRATORES COM ERROS"
-# report_path = r"C:\Users\marcos.silvaext\Documents\04 - REPORTS"
-# duplicate_file_path = r"C:\Users\marcos.silvaext\Documents\06 - ARQUIVOS DUPLICADOS"
+""" 
+extractor_file_path = r"C:\Users\marcos.silvaext\Documents\01 - INPUT_DATA"
+data_raw_path = r"C:\Users\marcos.silvaext\Documents\02 - DATA_RAW"
+file_path_error = r"C:\Users\marcos.silvaext\Documents\05 - EXTRATORES COM ERROS"
+report_path = r"C:\Users\marcos.silvaext\Documents\04 - REPORTS"
+duplicate_file_path = r"C:\Users\marcos.silvaext\Documents\06 - ARQUIVOS DUPLICADOS" """
 
 column_name = 'Pedido Faturamento'
 
